@@ -79,10 +79,12 @@ router.get("/", auth.optional, function(req, res, next) {
           .exec(),
         Item.count(query).exec(),
         req.payload ? User.findById(req.payload.id) : null
+
       ]).then(async function(results) {
         var items = results[0];
         var itemsCount = results[1];
         var user = results[2];
+
         return res.json({
           items: await Promise.all(
             items.map(async function(item) {
@@ -90,6 +92,8 @@ router.get("/", auth.optional, function(req, res, next) {
               return item.toJSONFor(user);
             })
           ),
+
+          isVerified: user?.isVerfied,
           itemsCount: itemsCount
         });
       });
